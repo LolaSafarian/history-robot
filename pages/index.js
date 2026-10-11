@@ -135,7 +135,7 @@ export default function Landing() {
             {[
               { num: "I", title: "Choose a Figure", desc: "Browse 150+ historical figures spanning 3,000 years of human history." },
               { num: "II", title: "Ask Anything", desc: "Ask about their life, decisions, secrets, regrets — anything you've ever wondered." },
-              { num: "III", title: "Hear Their Voice", desc: "Each figure responds in authentic character, with their own personality and perspective." },
+              { num: "III", title: "Read Their Words", desc: "Each figure responds in authentic character, with their own personality and perspective." },
             ].map((s, i) => (
               <div key={s.num} style={{ ...styles.step, position: "relative" }}>
                 <div style={styles.stepNum}>{s.num}</div>

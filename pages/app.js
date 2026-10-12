@@ -644,12 +644,20 @@ export default function Home() {
           <div style={{ ...styles.modalBox, maxWidth: 440, padding: 40, textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
             <h2 style={{ margin: "0 0 12px", fontSize: 22 }}>Premium Figure</h2>
-            <p style={{ opacity: 0.8, marginBottom: 28, lineHeight: 1.6, fontSize: 15 }}>
-              This historical figure is part of the History Robot premium collection.
-              Upgrade to unlock 140+ figures and have unlimited conversations with history.
+                        <p style={{ opacity: 0.8, marginBottom: 28, lineHeight: 1.6, fontSize: 15 }}>
+              Unlock all 150+ historical figures — royalty, scientists, villains, explorers and more. 
+              New figures added every week. Cancel anytime.
             </p>
-            <button style={styles.paywallPrimary} onClick={() => setShowPaywall(false)}>
-              Upgrade to Premium
+                        <button style={styles.paywallPrimary} onClick={async () => {
+              const res = await fetch('/api/create-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: '' }),
+              });
+              const data = await res.json();
+              if (data.url) window.location.href = data.url;
+            }}>
+              Upgrade to Premium — $7.99/month
             </button>
             <button style={styles.paywallSecondary} onClick={() => setShowPaywall(false)}>
               Maybe Later

@@ -17,17 +17,14 @@ async function buffer(readable) {
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
-  
   const buf = await buffer(req);
   const sig = req.headers['stripe-signature'];
-  
   let event;
   try {
     event = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
-
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const email = session.customer_email || session.customer_details?.email;
@@ -36,6 +33,5 @@ export default async function handler(req, res) {
       console.log('New subscriber saved:', email);
     }
   }
-
   res.json({ received: true });
 }

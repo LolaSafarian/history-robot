@@ -247,6 +247,8 @@ export default function Home() {
   const [showPaywall, setShowPaywall] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedEra, setSelectedEra] = useState("all");
+  const [userEmail, setUserEmail] = useState("");
+const [isSubscribed, setIsSubscribed] = useState(false);
 
   const chatEndRef = useRef(null);
   const typingIntervalRef = useRef(null);
@@ -275,7 +277,7 @@ export default function Home() {
   });
 
   function openFigure(f) {
-    if (!f.free) {
+    if (!f.free && !isSubscribed) {
       setShowPaywall(true);
       return;
     }
@@ -638,6 +640,24 @@ export default function Home() {
         </div>
       )}
 
+      {/* EMAIL LOGIN MODAL */}
+      {!isSubscribed && (
+        <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 999, background: "#121a2a", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 14, padding: "16px 20px", width: 300, boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+          <p style={{ color: "white", fontSize: 13, marginBottom: 10, opacity: 0.8 }}>🔓 Already subscribed? Enter your email to unlock all figures</p>
+          <input
+            type="email"
+            placeholder="your@email.com"
+            value={userEmail}
+            onChange={(e) => setUserEmail(e.target.value)}
+            style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "#0e1526", color: "white", fontSize: 13, marginBottom: 8, boxSizing: "border-box" }}
+          />
+          <button onClick={async () => {
+            const res = await fetch("/api/check-subscription", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: userEmail }) });
+            const data = await res.json();
+            if (data.subscribed) { setIsSubscribed(true); } else { alert("No subscription found for that email."); }
+          }} style={{ width: "100%", padding: "9px 0", borderRadius: 8, border: "none", background: "#4da6ff", color: "white", fontWeight: 700, cursor: "pointer", fontSize: 13 }}>Unlock Premium</button>
+        </div>
+      )}
       {/* PAYWALL MODAL */}
       {showPaywall && (
         <div style={styles.modalBackdrop} onClick={() => setShowPaywall(false)}>

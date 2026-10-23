@@ -1,5 +1,11 @@
 import Stripe from 'stripe';
+import { Redis } from '@upstash/redis';
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export const config = { api: { bodyParser: false } };
 
@@ -24,9 +30,11 @@ export default async function handler(req, res) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const email = session.customer_email;
-    // Store in a simple way — we'll use a cookie/session approach
-    console.log('New subscriber:', email);
+    const email = session.customer_email || session.customer_details?.email;
+    if (email) {
+      await redis.set(`subscriber:${email.toLowerCase().trim()}`, 'active');
+      console.log('New subscriber saved:', email);
+    }
   }
 
   res.json({ received: true });
